@@ -37,15 +37,15 @@ var fight = function (enemy) {
     var isPlayerTurn = true;
     if (Math.random() > 0.5) {
         isPlayerTurn = false;
-    } 
-    
+    }
+
     while (playerInfo.health > 0 && enemy.health > 0) {
         if (isPlayerTurn) {
             // ask player if they'd like to fight or run
             if (fightOrSkip()) {
                 // if true, leave fight by breaking loop
                 break;
-            }  
+            }
             var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
             enemy.health = Math.max(0, enemy.health - damage);
             console.log(playerInfo.name + " attacked " + enemy.name + ". " +
@@ -122,31 +122,39 @@ var startGame = function () {
 };
 
 // function to end the entire game
-var endGame = function () { // if player is still alive, player wins!
-    if (playerInfo.health > 0) {
-        window.alert("Great job, you've survived the game! You now have a score of " + playerInfo.money + ".");
+var endGame = function () {
+    window.alert("The game has now ended. Let's see how you did!");
+
+    // check localStorage for high score, if it's not there, use 0
+    var highScore = localStorage.getItem("highscore");
+    highScore = highScore || 0;
+    // if player has more money than the high score, player has new high score!
+    if (playerInfo.money > highScore) {
+        localStorage.setItem("highscore", playerInfo.money);
+        localStorage.setItem("name", playerInfo.name);
+
+        alert(playerInfo.name + " now has the high score of " + playerInfo.money + "!");
     }
     else {
-        window.alert("You've lost your robot in battle.");
+        alert(playerInfo.name + " did not beat the high score of " + highScore + ". Maybe next time!");
     }
+
     // ask player if they'd like to play again
     var playAgainConfirm = window.confirm("Would you like to play again?");
 
     if (playAgainConfirm) {
-        // restart the game
         startGame();
     }
     else {
         window.alert("Thank you for playing Robot Gladiators! Come back soon!");
     }
-
 };
 
 var shop = function () {
     // ask player what they'd like to do
     var shopOptionPrompt = window.prompt(
         "Would you like to REFILL your health, UPGRADE your attack, or LEAVE the store? Please enter one 1 for REFILL, 2 for UPGRADE, or 3 for LEAVE."
-        );
+    );
     shopOptionPrompt = parseInt(shopOptionPrompt);
     // use switch to carry out action
     switch (shopOptionPrompt) {
